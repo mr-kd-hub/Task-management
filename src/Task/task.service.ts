@@ -19,7 +19,7 @@ export class TaskService {
     return model.save();
   }
 
-  updateTask(id: string, dataToUpdate: TaskDocument): Promise<Task> {
+  updateTask(id: string, dataToUpdate: any): Promise<Task> {
     return this.taskModel.findByIdAndUpdate(
       id,
       { ...dataToUpdate },
