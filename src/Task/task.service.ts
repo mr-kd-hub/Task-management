@@ -16,7 +16,6 @@ export class TaskService {
     model.title = title;
     model.description = description;
     model.status = status;
-    console.log("model",model);
     
     return await model.save();
   }
@@ -47,9 +46,9 @@ export class TaskService {
     if (status !== undefined) {
       query['status'] = status;
     }
-    console.log("query",query)
     return await this.taskModel
       .find({ ...query })
+      .sort({ createdAt: -1 })
       .skip(offset)
       .limit(limit);
   }

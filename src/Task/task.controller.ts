@@ -24,10 +24,10 @@ export class TaskController {
     @Body('title') title: string,
     @Body('description') description: string,
     @Body('status') status: string,
-  ) {
-    if (!title || !description) {
+  ) {    
+    if (!title) {
       return res.status(404).send({
-        message: 'Invalid title or description',
+        message: 'Invalid title',
       });
     }
     const task = await this.taskService.createTask(title, description, status);
@@ -47,7 +47,6 @@ export class TaskController {
         message: 'Invalid id',
       });
     }
-    console.log(":dataToUpdate",dataToUpdate);
     
     const task = await this.taskService.updateTask(id, dataToUpdate);
     return res.status(200).send({
