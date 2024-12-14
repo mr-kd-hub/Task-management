@@ -19,60 +19,88 @@ export class TaskController {
     return 'Hello World!';
   }
   @Post()
-  createTask(
+  async createTask(
     @Res() res: any,
     @Body('title') title: string,
     @Body('description') description: string,
     @Body('status') status: string,
   ) {
     if (!title || !description) {
-      return res.status(404).json({
+      return res.status(404).send({
         message: 'Invalid title or description',
       });
     }
-    return this.taskService.createTask(title, description, status);
+    const task = await this.taskService.createTask(title, description, status);
+    return res.status(200).send({
+      task
+    }); 
   }
 
   @Patch(':id')
-  updateTask(
+  async updateTask(
     @Res() res: any,
     @Param('id') id: string,
     @Body() dataToUpdate: any,
   ) {
     if (!id) {
-      return res.status(404).json({
+      return res.status(404).send({
         message: 'Invalid id',
       });
     }
-    return this.taskService.updateTask(id, dataToUpdate);
+    console.log(":dataToUpdate",dataToUpdate);
+    
+    const task = await this.taskService.updateTask(id, dataToUpdate);
+    return res.status(200).send({
+      task
+    });
   }
 
   @Delete(':id')
-  deleteTask(@Res() res: any, @Param('id') id: string) {
+  async deleteTask(@Res() res: any, @Param('id') id: string) {
     if (!id) {
-      return res.status(404).json({
+      return res.status(404).send({
         message: 'Invalid id',
       });
     }
-    return this.taskService.deleteTask(id);
+    await this.taskService.deleteTask(id);
+    return res.status(200).send({
+      "message":"Task deleted successfully"
+    });
   }
 
   @Get(':id')
-  getTask(@Res() res: any, @Param('id') id: string) {
+  async getTask(@Res() res: any, @Param('id') id: string) {
     if (!id) {
-      return res.status(404).json({
+      return res.status(404).send({
         message: 'Invalid id',
       });
     }
-    return this.taskService.getTask(id);
+    const task = await this.taskService.getTask(id);
+    return res.status(200).send({
+      task
+    });
   }
 
   @Post('/list')
-  getAllTasks(
+  async getAllTasks(
+    @Res() res: any,
     @Body('offset') offset?: number,
     @Body('limit') limit?: number,
     @Body('status') status?: string | undefined,
   ) {
-    return this.taskService.getAllTasks({ offset, limit, status });
+    const query = {}
+    if(offset !== undefined){
+      query['offset'] = offset
+    }
+    if(limit !== undefined){
+      query['limit'] = limit
+    }
+    if(status !== undefined){
+      query['status'] = status
+    }
+    const task = await this.taskService.getAllTasks({ ...query });
+    return res.status(200).send({
+      task
+    }); 
   }
 }

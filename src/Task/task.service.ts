@@ -7,7 +7,7 @@ import { Model } from "mongoose";
 export class TaskService {
   constructor(@InjectModel(Task.name) private taskModel: Model<TaskDocument>) {}
 
-  createTask(
+  async createTask(
     title: string,
     description: string,
     status: string,
@@ -16,36 +16,39 @@ export class TaskService {
     model.title = title;
     model.description = description;
     model.status = status;
-    return model.save();
+    console.log("model",model);
+    
+    return await model.save();
   }
 
-  updateTask(id: string, dataToUpdate: any): Promise<Task> {
-    return this.taskModel.findByIdAndUpdate(
+  async updateTask(id: string, dataToUpdate: any): Promise<Task> {
+    return await this.taskModel.findByIdAndUpdate(
       id,
       { ...dataToUpdate },
       { new: true },
     );
   }
 
-  deleteTask(id: string): Promise<Task> {
-    return this.taskModel.findByIdAndUpdate(id, { is_delete: true });
+  async deleteTask(id: string): Promise<Task> {
+    return await this.taskModel.findByIdAndUpdate(id, { is_delete: true });
   }
 
-  getTask(id: string): Promise<Task> {
-    return this.taskModel.findById(id);
+  async getTask(id: string): Promise<Task> {
+    return await this.taskModel.findById(id);
   }
 
-  getAllTasks(data: {
-    offset: number;
-    limit: number;
-    status: string | undefined;
+  async getAllTasks(data: {
+    offset?: number;
+    limit?: number;
+    status?: string | undefined;
   }): Promise<Task[]> {
-    const { offset, limit = 10, status } = data;
+    const { offset = 0, limit = 10, status } = data;
     const query = { is_delete: false };
     if (status !== undefined) {
       query['status'] = status;
     }
-    return this.taskModel
+    console.log("query",query)
+    return await this.taskModel
       .find({ ...query })
       .skip(offset)
       .limit(limit);
