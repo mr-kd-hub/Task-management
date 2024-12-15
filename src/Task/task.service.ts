@@ -18,6 +18,7 @@ export class TaskService {
     title: string,
     description: string,
     status: string,
+    userId: string,
     dueDate?: string,
   ): Promise<Task> {
     const model = new this.taskModel();
@@ -25,6 +26,7 @@ export class TaskService {
     model.description = description;
     model.status = status;
     model.dueDate = dueDate;
+    model.userId = userId;
 
     await model.save();
     try{
@@ -58,14 +60,17 @@ export class TaskService {
     status?: string;
     search?: string;
     sortOption: any;
+    userId: string;
   }): Promise<Task[]> {
-    const { offset, limit, status, search, sortOption } = data;
+    const { offset, limit, status, search, sortOption, userId } = data;
     const query = { is_delete: false };
     if (status !== undefined) {
       query['status'] = status;
     }
     if (search !== undefined)
       query['title'] = { $regex: search, $options: 'i' };
+
+    query['userId'] = userId;
     return await this.taskModel
       .find({ ...query })
       .sort(sortOption)

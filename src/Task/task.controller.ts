@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -24,12 +25,14 @@ export class TaskController {
   @Post()
   async createTask(
     @Res() res: any,
+    @Req() req: any,
     @Body('title') title: string,
     @Body('description') description: string,
     @Body('status') status: string,
     @Body('dueDate') dueDate: string,
   ) {
     try {
+      const userId = req?.user?.userId
       if (!title) {
         return res.status(404).send({
           message: 'Invalid title',
@@ -39,6 +42,7 @@ export class TaskController {
         title,
         description,
         status,
+        userId,
         dueDate,
       );
       return res.status(200).send({
@@ -55,6 +59,7 @@ export class TaskController {
   @Patch(':id')
   async updateTask(
     @Res() res: any,
+    @Req() req: any,
     @Param('id') id: string,
     @Body() dataToUpdate: any,
   ) {
@@ -77,7 +82,7 @@ export class TaskController {
   }
 
   @Delete(':id')
-  async deleteTask(@Res() res: any, @Param('id') id: string) {
+  async deleteTask(@Res() res: any,@Req() req: any, @Param('id') id: string) {
     try {
       if (!id) {
         return res.status(404).send({
@@ -97,7 +102,7 @@ export class TaskController {
   }
 
   @Get(':id')
-  async getTask(@Res() res: any, @Param('id') id: string) {
+  async getTask(@Res() res: any,@Req() req: any, @Param('id') id: string) {
     try {
       if (!id) {
         return res.status(404).send({
@@ -119,6 +124,7 @@ export class TaskController {
   @Post('/list')
   async getAllTasks(
     @Res() res: any,
+    @Req() req: any,
     @Body('offset') offset?: number,
     @Body('limit') limit?: number,
     @Body('status') status?: string | undefined,
@@ -126,7 +132,10 @@ export class TaskController {
     @Body('sort') sort?: string,
   ) {
     try {
-      const query = {};
+      const userId = req?.user?.userId
+      const query = {
+        userId
+      };
       if (offset !== undefined) {
         query['offset'] = offset;
       }
