@@ -7,10 +7,13 @@ import {
   Patch,
   Post,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
+import { JwtAuthGuard } from 'src/Auth/Guards/auth.guard';
 
 @Controller('task')
+@UseGuards(JwtAuthGuard) // Protect all task routes
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
