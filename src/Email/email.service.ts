@@ -6,7 +6,7 @@ export class EmailService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
-    // Configure the email transport service
+    //configure the email transport service
     this.transporter = nodemailer.createTransport({
       host: 'smtp.ethereal.email',
       port: 587,

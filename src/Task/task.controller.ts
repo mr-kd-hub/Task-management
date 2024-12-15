@@ -110,7 +110,7 @@ export class TaskController {
     }); 
   }
 
-  //manual testing pupose
+  //manual testing purpose only
   @Post('reminder')
   async sendReminder(
     @Body('email') email: string,
