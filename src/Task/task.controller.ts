@@ -109,4 +109,15 @@ export class TaskController {
       task
     }); 
   }
+
+  //manual testing pupose
+  @Post('reminder')
+  async sendReminder(
+    @Body('email') email: string,
+    @Body('taskTitle') taskTitle: string,
+    @Body('dueDate') dueDate: string,
+  ) {
+    await this.taskService.sendTaskReminder(email, taskTitle, dueDate);
+    return { message: 'Reminder email sent successfully!' };
+  }
 }
