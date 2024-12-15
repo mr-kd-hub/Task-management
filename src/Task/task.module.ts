@@ -3,14 +3,14 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Task, taskSchema } from "./task.model";
 import { TaskController } from "./task.controller";
 import { TaskService } from "./task.service";
-import { ReminderModule } from "src/Reminder/reminder.module";
+import { EmailModule } from "src/Email/email.module";
 
 @Module({
     imports:[MongooseModule.forFeature([{
         name:Task.name,
         schema:taskSchema
       }]),
-      ReminderModule
+      EmailModule
     ],
       controllers: [TaskController],
       providers: [TaskService],

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
-export class ReminderService {
+export class EmailService {
   private transporter: nodemailer.Transporter;
 
   constructor() {

@@ -2,11 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Task, TaskDocument } from "./task.model";
 import { Model } from "mongoose";
-import { ReminderService } from "src/Reminder/reminder.service";
+import { EmailService } from "src/Email/email.service";
 
 @Injectable()
 export class TaskService {
-  constructor(@InjectModel(Task.name) private taskModel: Model<TaskDocument>, private readonly reminderService: ReminderService) {}
+  constructor(@InjectModel(Task.name) private taskModel: Model<TaskDocument>, private readonly emailService: EmailService) {}
 
   async createTask(
     title: string,
@@ -62,6 +62,6 @@ export class TaskService {
   async sendTaskReminder(email: string, taskTitle: string, dueDate: string): Promise<void> {
     const subject = `Reminder: Task "${taskTitle}" is due soon!`;
     const text = `Hello,\n\nThis is a friendly reminder that your task "${taskTitle}" is due on ${dueDate}.\n\nBest regards,\nTask Management App`;
-    await this.reminderService.sendEmail(email, subject, text);
+    await this.emailService.sendEmail(email, subject, text);
   }
 }
