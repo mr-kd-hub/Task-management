@@ -11,11 +11,13 @@ export class TaskService {
     title: string,
     description: string,
     status: string,
+    dueDate?: string 
   ): Promise<Task> {
     const model = new this.taskModel();
     model.title = title;
     model.description = description;
     model.status = status;
+    model.dueDate = dueDate;
     
     return await model.save();
   }

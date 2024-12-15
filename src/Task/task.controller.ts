@@ -24,13 +24,14 @@ export class TaskController {
     @Body('title') title: string,
     @Body('description') description: string,
     @Body('status') status: string,
+    @Body('dueDate') dueDate: string,
   ) {    
     if (!title) {
       return res.status(404).send({
         message: 'Invalid title',
       });
     }
-    const task = await this.taskService.createTask(title, description, status);
+    const task = await this.taskService.createTask(title, description, status, dueDate);
     return res.status(200).send({
       task
     }); 
