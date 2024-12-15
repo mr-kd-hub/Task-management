@@ -1,6 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import * as bcrypt from 'bcrypt';
 
 @Schema({ timestamps: true })
 export class Auth {
@@ -15,11 +14,6 @@ export class Auth {
 
   @Prop({ default: false })
   is_delete: boolean;
-  
-
-  async validatePassword(password: string): Promise<boolean> {
-    return bcrypt.compare(password, this.password);
-  }
 
 }
 export type AuthDocument = Auth & Document;

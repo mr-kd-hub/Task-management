@@ -14,7 +14,9 @@ export class Task {
 
   @Prop({ default: false })
   is_delete: boolean;
-  
+
+  @Prop()
+  dueDate: string;
 }
 export type TaskDocument = Task & Document;
 export const taskSchema = SchemaFactory.createForClass(Task);

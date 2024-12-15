@@ -27,16 +27,29 @@ export class TaskController {
     @Body('title') title: string,
     @Body('description') description: string,
     @Body('status') status: string,
-  ) {    
-    if (!title) {
-      return res.status(404).send({
-        message: 'Invalid title',
+    @Body('dueDate') dueDate: string,
+  ) {
+    try {
+      if (!title) {
+        return res.status(404).send({
+          message: 'Invalid title',
+        });
+      }
+      const task = await this.taskService.createTask(
+        title,
+        description,
+        status,
+        dueDate,
+      );
+      return res.status(200).send({
+        task,
+      });
+    } catch (err: any) {
+      return res.status(500).send({
+        message: 'Error in creation',
+        err,
       });
     }
-    const task = await this.taskService.createTask(title, description, status);
-    return res.status(200).send({
-      task
-    }); 
   }
 
   @Patch(':id')
@@ -45,42 +58,62 @@ export class TaskController {
     @Param('id') id: string,
     @Body() dataToUpdate: any,
   ) {
-    if (!id) {
-      return res.status(404).send({
-        message: 'Invalid id',
+    try {
+      if (!id) {
+        return res.status(404).send({
+          message: 'Invalid id',
+        });
+      }
+      const task = await this.taskService.updateTask(id, dataToUpdate);
+      return res.status(200).send({
+        task,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        message: 'Error in updation',
+        err,
       });
     }
-    
-    const task = await this.taskService.updateTask(id, dataToUpdate);
-    return res.status(200).send({
-      task
-    });
   }
 
   @Delete(':id')
   async deleteTask(@Res() res: any, @Param('id') id: string) {
-    if (!id) {
-      return res.status(404).send({
-        message: 'Invalid id',
+    try {
+      if (!id) {
+        return res.status(404).send({
+          message: 'Invalid id',
+        });
+      }
+      await this.taskService.deleteTask(id);
+      return res.status(200).send({
+        message: 'Task deleted successfully',
+      });
+    } catch (err: any) {
+      return res.status(500).send({
+        message: 'Error in deleteion',
+        err,
       });
     }
-    await this.taskService.deleteTask(id);
-    return res.status(200).send({
-      "message":"Task deleted successfully"
-    });
   }
 
   @Get(':id')
   async getTask(@Res() res: any, @Param('id') id: string) {
-    if (!id) {
-      return res.status(404).send({
-        message: 'Invalid id',
+    try {
+      if (!id) {
+        return res.status(404).send({
+          message: 'Invalid id',
+        });
+      }
+      const task = await this.taskService.getTask(id);
+      return res.status(200).send({
+        task,
+      });
+    } catch (err: any) {
+      return res.status(500).send({
+        message: 'Error in get',
+        err,
       });
     }
-    const task = await this.taskService.getTask(id);
-    return res.status(200).send({
-      task
-    });
   }
 
   @Post('/list')
@@ -89,26 +122,49 @@ export class TaskController {
     @Body('offset') offset?: number,
     @Body('limit') limit?: number,
     @Body('status') status?: string | undefined,
-    @Body('search') search?: string,  // add search query here if needed  //
+    @Body('search') search?: string, // add search query here if needed  //
     @Body('sort') sort?: string,
   ) {
-    const query = {}
-    if(offset !== undefined){
-      query['offset'] = offset
+    try {
+      const query = {};
+      if (offset !== undefined) {
+        query['offset'] = offset;
+      }
+      if (limit !== undefined) {
+        query['limit'] = limit;
+      }
+      if (status !== undefined) {
+        query['status'] = status;
+      }
+      if (search !== undefined) {
+        query['search'] = search;
+      }
+      const sortOption =
+        sort === 'dueDate'
+          ? { dueDate: -1 }
+          : sort === 'title'
+            ? { title: -1 }
+            : { createdAt: -1 };
+      const task = await this.taskService.getAllTasks({ ...query, sortOption });
+      return res.status(200).send({
+        task,
+      });
+    } catch (err: any) {
+      return res.status(500).send({
+        message: 'Error in list',
+        err,
+      });
     }
-    if(limit !== undefined){
-      query['limit'] = limit
-    }
-    if(status !== undefined){
-      query['status'] = status
-    }
-    if(search !== undefined){
-      query['search'] = search
-    }
-    const sortOption = sort === 'dueDate' ? { dueDate: -1 } : sort === 'title' ? { title: -1 } : { createdAt: -1 };
-    const task = await this.taskService.getAllTasks({ ...query, sortOption });
-    return res.status(200).send({
-      task
-    }); 
+  }
+
+  //manual testing purpose only
+  @Post('reminder')
+  async sendReminder(
+    @Body('email') email: string,
+    @Body('taskTitle') taskTitle: string,
+    @Body('dueDate') dueDate: string,
+  ) {
+    await this.taskService.sendTaskReminder(email, taskTitle, dueDate);
+    return { message: 'Reminder email sent successfully!' };
   }
 }

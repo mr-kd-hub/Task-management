@@ -14,13 +14,14 @@ import { AuthController } from "./auth.controller";
         MongooseModule.forFeature([{ name: Auth.name, schema: authSchema }]),
         PassportModule,
         JwtModule.registerAsync({
-          imports: [ConfigModule],
+          imports: [ConfigModule,],
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => ({
-            secret: configService.get<string>('hddndhj_sbfsfsf_fsbfsfsf_sffsf'),
+            secret: configService.get<string>('JWT_SECRET'),
             signOptions: { expiresIn: '1h' },
           }),
         }),
+        ConfigModule
       ],
       controllers: [AuthController],
       providers: [AuthService, JwtStrategy, JwtAuthGuard],

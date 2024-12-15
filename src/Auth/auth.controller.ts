@@ -13,14 +13,15 @@ export class AuthController {
     @Body('avatarUrl') avatarUrl?: string,
   ) {
     try {
-      await this.authService.signUp(email, password, avatarUrl);
+      const token = await this.authService.signUp(email, password, avatarUrl);
       return res.status(200).send({
-        message: 'User sign-up successfully'
+        message: 'User sign-up successfully',
+        token: token?.access_token
       });
     } catch (err:any) {
-      console.log(err)
+      console.log(err.message)
       return res.status(500).send({
-        message: 'Error sign-up user'
+        message: err.message || 'Error sign-up user'
       });
     }
   }
@@ -40,7 +41,7 @@ export class AuthController {
     } catch (err:any) {
       console.log(err)
       return res.status(500).send({
-        message: 'Error Sign-in user'
+        message: err.message || 'Error Sign-in user'
       });
     }
   }
