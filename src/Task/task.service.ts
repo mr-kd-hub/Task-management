@@ -41,8 +41,9 @@ export class TaskService {
     limit?: number;
     status?: string;
     search?: string;
+    sortOption: any
   }): Promise<Task[]> {
-    const { offset, limit, status, search } = data;
+    const { offset, limit, status, search, sortOption } = data;
     const query = { is_delete: false };
     if (status !== undefined) {
       query['status'] = status;
@@ -50,7 +51,7 @@ export class TaskService {
     if (search !== undefined) query['title'] = { $regex: search, $options: 'i' };
     return await this.taskModel
       .find({ ...query })
-      .sort({ createdAt: -1 })
+      .sort(sortOption)
       .skip(offset)
       .limit(limit);
   }

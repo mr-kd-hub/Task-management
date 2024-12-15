@@ -87,6 +87,7 @@ export class TaskController {
     @Body('limit') limit?: number,
     @Body('status') status?: string | undefined,
     @Body('search') search?: string,  // add search query here if needed  //
+    @Body('sort') sort?: string,
   ) {
     const query = {}
     if(offset !== undefined){
@@ -101,7 +102,8 @@ export class TaskController {
     if(search !== undefined){
       query['search'] = search
     }
-    const task = await this.taskService.getAllTasks({ ...query });
+    const sortOption = sort === 'dueDate' ? { dueDate: -1 } : sort === 'title' ? { title: -1 } : { createdAt: -1 };
+    const task = await this.taskService.getAllTasks({ ...query, sortOption });
     return res.status(200).send({
       task
     }); 
