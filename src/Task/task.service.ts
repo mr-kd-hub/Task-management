@@ -39,13 +39,15 @@ export class TaskService {
   async getAllTasks(data: {
     offset?: number;
     limit?: number;
-    status?: string | undefined;
+    status?: string;
+    search?: string;
   }): Promise<Task[]> {
-    const { offset = 0, limit = 10, status } = data;
+    const { offset, limit, status, search } = data;
     const query = { is_delete: false };
     if (status !== undefined) {
       query['status'] = status;
     }
+    if (search !== undefined) query['title'] = { $regex: search, $options: 'i' };
     return await this.taskModel
       .find({ ...query })
       .sort({ createdAt: -1 })

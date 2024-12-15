@@ -86,6 +86,7 @@ export class TaskController {
     @Body('offset') offset?: number,
     @Body('limit') limit?: number,
     @Body('status') status?: string | undefined,
+    @Body('search') search?: string,  // add search query here if needed  //
   ) {
     const query = {}
     if(offset !== undefined){
@@ -96,6 +97,9 @@ export class TaskController {
     }
     if(status !== undefined){
       query['status'] = status
+    }
+    if(search !== undefined){
+      query['search'] = search
     }
     const task = await this.taskService.getAllTasks({ ...query });
     return res.status(200).send({
